@@ -3,15 +3,17 @@ import { motion } from 'motion/react';
 import { Button } from "@/components/ui/button";
 import { Sparkles, MoveUp } from 'lucide-react';
 import AnimatedGradientBackground from '@/components/animated-gradient';
+import Navbar from '@/components/navbar';
 
 const Page: React.FC = () => {
     const [prompt, setPrompt] = useState<string>("");
 
     return (
         <>
+            <Navbar />
             <section className="relative min-h-screen px-5 py-10 flex items-center justify-center overflow-hidden bg-black max-[426px]:px-0">
                 <AnimatedGradientBackground />
-                <div className="relative z-10 text-center max-w-6xl mx-auto flex items-center justify-center flex-col max-[426px]:px-4">
+                <div className="relative z-10 text-center max-w-7xl mx-auto flex items-center justify-center flex-col max-[426px]:px-4">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -28,12 +30,9 @@ const Page: React.FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-8xl max-[768px]:text-7xl max-[640px]:text-6xl max-[540px]:text-5xl max-[364px]:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400 mb-6 leading-tight font-oswald tracking-tight text-center"
+                        className="text-8xl max-[768px]:text-7xl max-[640px]:text-6xl max-[540px]:text-5xl max-[364px]:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400 mb-6 leading-tight font-noto tracking-tight text-center"
                     >
-                        Transform Text to
-                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-gray-300 to-white">
-                            Animated Magic
-                        </span>
+                        Cursor for 2D Animations
                     </motion.h1>
 
                     <motion.p
@@ -42,14 +41,14 @@ const Page: React.FC = () => {
                         transition={{ duration: 0.8, delay: 0.4 }}
                         className="text-lg max-[768px]:text-base max-[640px]:text-sm max-[425px]:text-xs font-noto text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
                     >
-                        Transform your ideas into stunning mathematical animations with AI. Built on the powerful Manim library, our platform makes complex visualizations accessible to educators, students, and content creators worldwide.
+                        Transform your ideas into stunning mathematical animations with AI. Just prompt, run and watch your mathematical ideas transform into clear, engaging 2D animations.
                     </motion.p>
 
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="w-3xl bg-gray-900 rounded-3xl mt-5 max-md:w-full">
+                        className="w-3xl bg-[#262626] rounded-3xl mt-5 max-md:w-full">
                         <textarea
                             placeholder='E.g., “ Animate a circle rotating ”'
                             value={prompt}
