@@ -14,7 +14,11 @@ import {
 import { supabase } from '@/supabase/supabaseConfig';
 import Loader from './loader';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+    position?: string;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ position = "fixed" }) => {
     const [isScrolled, setIsScrolled] = useState<boolean>(false);
     const [isAuthDialogOpen, setIsAuthDialogOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -53,7 +57,7 @@ const Navbar: React.FC = () => {
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ ease: easeIn, duration: 0.4 }}
-                className={`fixed left-0 top-0 w-full z-50 bg-transparent ${isScrolled && "bg-black/50 backdrop-blur-md shadow-lg"}`}
+                className={`${position} left-0 top-0 w-full z-50 bg-transparent ${isScrolled && "bg-black/50 backdrop-blur-md shadow-lg"}`}
             >
                 <div className="container mx-auto px-3 py-3 flex justify-between items-center max-[426px]:px-5">
                     <h1 className='font-oswald text-2xl font-semibold text-white'>Flatmotion</h1>

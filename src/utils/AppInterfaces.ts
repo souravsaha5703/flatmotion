@@ -2,3 +2,17 @@ export interface DialogProps {
     isDialogOpen: boolean;
     setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+export interface Message {
+    id: string;
+    userMessage: string;
+    videoScript: string;
+    videoUrl: string
+}
+
+export interface Chat {
+    id: string;
+    chatName: string;
+    messages: Message[];
+    user_id: string;
+}

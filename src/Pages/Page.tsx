@@ -4,9 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, MoveUp } from 'lucide-react';
 import AnimatedGradientBackground from '@/components/animated-gradient';
 import Navbar from '@/components/navbar';
+import { useAppDispatch } from '@/hooks/redux-hooks';
+import { addPrompt } from '@/features/prompt/promptSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Page: React.FC = () => {
     const [prompt, setPrompt] = useState<string>("");
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    const handlePromptSend = () => {
+        if (prompt.trim() !== '') {
+            dispatch(addPrompt(prompt));
+            navigate('/chat');
+        }
+    }
 
     return (
         <>
@@ -57,6 +69,8 @@ const Page: React.FC = () => {
                         />
                         <div className='relative w-full h-12'>
                             <Button
+                                disabled={prompt.trim() == ''}
+                                onClick={handlePromptSend}
                                 className="absolute bottom-4 right-4 bg-white flex items-center justify-center hover:bg-slate-100 cursor-pointer rounded-full"
                             >
                                 <MoveUp className='text-black size-4' />
