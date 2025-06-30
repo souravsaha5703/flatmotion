@@ -9,9 +9,11 @@ import { addChat } from '@/features/chat/chatSlice';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
+import Loader from '@/components/loader';
 
 const Page: React.FC = () => {
     const [prompt, setPrompt] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { session } = useAuth();
@@ -19,6 +21,7 @@ const Page: React.FC = () => {
     const handlePromptSend = async () => {
         if (prompt.trim() !== '') {
             if (session?.access_token) {
+                setLoading(true);
                 const access_token = session.access_token;
                 try {
                     const response = await axios.post(
@@ -33,10 +36,12 @@ const Page: React.FC = () => {
                             withCredentials: true
                         },
                     );
-                    dispatch(addChat(response.data));
-                    navigate('/chat');
+                    setLoading(false);
+                    dispatch(addChat(response.data.data[0]));
+                    navigate(`/chat/${response.data.data[0].id}`);
                     console.log(response.data);
                 } catch (error) {
+                    setLoading(false);
                     console.error(error);
                 }
             }
@@ -45,7 +50,7 @@ const Page: React.FC = () => {
 
     return (
         <>
-            <Navbar />
+            <Navbar page='home' />
             <section className="relative min-h-screen px-5 py-10 flex items-center justify-center overflow-hidden bg-black max-[426px]:px-0">
                 <AnimatedGradientBackground />
                 <div className="relative z-10 text-center max-w-7xl mx-auto flex items-center justify-center flex-col max-[426px]:px-4">
@@ -92,11 +97,11 @@ const Page: React.FC = () => {
                         />
                         <div className='relative w-full h-12'>
                             <Button
-                                disabled={prompt.trim() == ''}
+                                disabled={prompt.trim() == '' || loading}
                                 onClick={handlePromptSend}
                                 className="absolute bottom-4 right-4 bg-white flex items-center justify-center hover:bg-slate-100 cursor-pointer rounded-full"
                             >
-                                <MoveUp className='text-black size-4' />
+                                {loading ? <Loader /> : <MoveUp className='text-black size-4' />}
                             </Button>
                         </div>
                     </motion.div>
