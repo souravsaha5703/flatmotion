@@ -1,46 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import ChatSidebar from '@/components/chatSidebar';
 import Navbar from '@/components/navbar';
 import { Button } from '@/components/ui/button';
 import { MoveUp } from 'lucide-react';
 import { easeIn, motion } from 'motion/react';
-import { useAppSelector } from '@/hooks/redux-hooks';
-import { useAuth } from '@/hooks/useAuth';
-import axios from 'axios';
 
 const Chat = () => {
     const [prompt, setPrompt] = useState<string>("");
-    const { session } = useAuth();
-    const currentPrompt = useAppSelector((state) => state.prompt.currentPrompt);
-
-    useEffect(() => {
-        if (currentPrompt) {
-            if (session?.access_token) {
-                const access_token = session?.access_token;
-                const generateVideo = async () => {
-                    try {
-                        const response = await axios.post(
-                            import.meta.env.VITE_SERVER_GENERATE_VIDEO_URL,
-                            { prompt: currentPrompt },
-                            {
-                                headers: {
-                                    Authorization: `Bearer ${access_token}`,
-                                    'Content-Type': 'application/json',
-                                },
-                                withCredentials: true
-                            },
-                        );
-                        console.log(response.data);
-                    } catch (error) {
-                        console.error(error);
-                    }
-                }
-                generateVideo();
-            }
-        }
-    }, [currentPrompt]);
-
+    
     return (
         <>
             <SidebarProvider>

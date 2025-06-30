@@ -9,11 +9,11 @@ export const useAuth = () => {
     useEffect(() => {
         const getInitialSession = async () => {
             try {
-                const { data: { session }, error } = await supabase.auth.getSession()
+                const { data , error } = await supabase.auth.getSession()
                 if (error) {
                     console.error('Error getting initial session:', error)
                 } else {
-                    setSession(session)
+                    setSession(data.session)
                     setUser(session?.user ?? null)
                 }
             } catch (error) {

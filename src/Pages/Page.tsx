@@ -5,18 +5,41 @@ import { Sparkles, MoveUp } from 'lucide-react';
 import AnimatedGradientBackground from '@/components/animated-gradient';
 import Navbar from '@/components/navbar';
 import { useAppDispatch } from '@/hooks/redux-hooks';
-import { addPrompt } from '@/features/prompt/promptSlice';
+import { addChat } from '@/features/chat/chatSlice';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import axios from 'axios';
 
 const Page: React.FC = () => {
     const [prompt, setPrompt] = useState<string>("");
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const { session } = useAuth();
 
-    const handlePromptSend = () => {
+    const handlePromptSend = async () => {
         if (prompt.trim() !== '') {
-            dispatch(addPrompt(prompt));
-            navigate('/chat');
+            if (session?.access_token) {
+                const access_token = session.access_token;
+                try {
+                    const response = await axios.post(
+                        import.meta.env.VITE_SERVER_GENERATE_VIDEO_URL,
+                        { prompt: prompt },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${access_token}`,
+                                "x-refresh-token": session.refresh_token,
+                                'Content-Type': 'application/json',
+                            },
+                            withCredentials: true
+                        },
+                    );
+                    dispatch(addChat(response.data));
+                    navigate('/chat');
+                    console.log(response.data);
+                } catch (error) {
+                    console.error(error);
+                }
+            }
         }
     }
 
