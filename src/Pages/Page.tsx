@@ -25,7 +25,7 @@ const Page: React.FC = () => {
                 const access_token = session.access_token;
                 try {
                     const response = await axios.post(
-                        import.meta.env.VITE_SERVER_GENERATE_VIDEO_URL,
+                        `${import.meta.env.VITE_SERVER_URL}/generate`,
                         { prompt: prompt },
                         {
                             headers: {
