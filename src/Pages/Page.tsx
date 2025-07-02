@@ -20,13 +20,14 @@ const Page: React.FC = () => {
 
     const handlePromptSend = async () => {
         if (prompt.trim() !== '') {
+            const customizedPrompt: string = prompt + " using manim animation";
             if (session?.access_token) {
                 setLoading(true);
                 const access_token = session.access_token;
                 try {
                     const response = await axios.post(
                         `${import.meta.env.VITE_SERVER_URL}/generate`,
-                        { prompt: prompt },
+                        { prompt: customizedPrompt },
                         {
                             headers: {
                                 Authorization: `Bearer ${access_token}`,
@@ -39,7 +40,6 @@ const Page: React.FC = () => {
                     setLoading(false);
                     dispatch(addChat(response.data.data[0]));
                     navigate(`/chat/${response.data.data[0].id}`);
-                    console.log(response.data);
                 } catch (error) {
                     setLoading(false);
                     console.error(error);
@@ -93,7 +93,7 @@ const Page: React.FC = () => {
                             placeholder='E.g., “ Animate a circle rotating ”'
                             value={prompt}
                             onChange={(e) => setPrompt(e.target.value)}
-                            className="w-full text-lg pl-6 py-4 pr-4 resize-none border-none outline-none focus:outline-none focus:ring-0 bg-transparent font-noto text-gray-100 placeholder:text-gray-300 placeholder:text-base placeholder:font-noto placeholder:font-medium font-normal"
+                            className="w-full text-base pl-6 py-4 pr-4 resize-none border-none outline-none focus:outline-none focus:ring-0 bg-transparent font-noto text-gray-100 placeholder:text-gray-300 placeholder:text-base placeholder:font-noto placeholder:font-medium font-normal"
                         />
                         <div className='relative w-full h-12'>
                             <Button

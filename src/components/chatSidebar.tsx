@@ -11,10 +11,20 @@ import {
     SidebarTrigger,
     useSidebar,
 } from "@/components/ui/sidebar";
+import { useNavigate } from 'react-router-dom';
 
 const ChatSidebar: React.FC = () => {
     const { state } = useSidebar();
+    const navigate = useNavigate();
     const isCollapsed = state === "collapsed";
+
+    const handleNewChat = () => {
+        navigate('/chat');
+    }
+
+    const handleChatHistory = () => {
+        navigate('/history');
+    }
 
     return (
         <Sidebar
@@ -31,6 +41,7 @@ const ChatSidebar: React.FC = () => {
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton
+                                    onClick={handleNewChat}
                                     tooltip={isCollapsed ? "New Chat" : undefined}
                                     className="dark:hover:bg-[#262626] hover:bg-black text-black hover:text-gray-100 dark:text-gray-100 dark:hover:text-white transition-colors w-full flex items-center justify-start cursor-pointer"
                                 >
@@ -41,6 +52,7 @@ const ChatSidebar: React.FC = () => {
 
                             <SidebarMenuItem>
                                 <SidebarMenuButton
+                                    onClick={handleChatHistory}
                                     tooltip={isCollapsed ? "Chat History" : undefined}
                                     className="dark:hover:bg-[#262626] hover:bg-black text-black hover:text-gray-100 dark:text-gray-100 dark:hover:text-white transition-colors w-full flex items-center justify-start cursor-pointer"
                                 >

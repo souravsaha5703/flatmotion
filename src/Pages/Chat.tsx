@@ -39,7 +39,6 @@ const ChatPage = () => {
                 }
             );
             setChatMessages(response.data.data[0].messages);
-            console.log("sent")
         } catch (error) {
             console.error(error);
         }
@@ -65,7 +64,7 @@ const ChatPage = () => {
                 const access_token = session.access_token;
                 setVideoLoading(true);
                 try {
-                    const response = await axios.put(
+                    await axios.put(
                         `${import.meta.env.VITE_SERVER_URL}/modify_animation`,
                         { prompt: prompt, chat_id: id },
                         {
@@ -78,8 +77,6 @@ const ChatPage = () => {
                         },
                     );
                     fetchMessages();
-                    // dispatch(addChat(response.data.data[0]));
-                    console.log(response.data);
                 } catch (error) {
                     console.error(error);
                 }
@@ -99,7 +96,7 @@ const ChatPage = () => {
     return (
         <>
             <SidebarProvider>
-                <div className="h-screen flex w-full relative dark:bg-[#262626] bg-gray-50">
+                <div className="h-screen flex w-full relative bg-neutral-800">
                     <ChatSidebar />
 
                     <div className="flex-1 flex flex-col items-center h-screen relative">
@@ -113,16 +110,16 @@ const ChatPage = () => {
                             <div className="w-full h-[90vh] overflow-y-auto px-4 pt-20 pb-40" ref={scrollAreaRef}>
                                 <div className="max-w-3xl mx-auto">
                                     {chatMessages.map((msg) => (
-                                        <div key={msg.id} className="space-y-5">
+                                        <div key={msg.id} className="space-y-12">
                                             <div className="flex justify-end mt-5">
-                                                <div className="bg-gray-700 text-white px-6 py-3 rounded-2xl max-w-md font-noto font-normal text-base">
+                                                <div className="bg-neutral-700 text-white px-5 py-3 rounded-xl max-w-md font-noto font-light text-base">
                                                     {msg.userMessage}
                                                 </div>
                                             </div>
 
                                             <div className="flex justify-start">
-                                                <div className="rounded-xl max-w-md">
-                                                    <video controls className="rounded-lg w-full max-w-sm">
+                                                <div className="rounded-xl overflow-hidden w-md">
+                                                    <video muted controls className="rounded-lg w-full">
                                                         <source src={msg.videoUrl} type="video/mp4" />
                                                         Your browser does not support the video tag.
                                                     </video>
@@ -135,15 +132,15 @@ const ChatPage = () => {
                                     <div className="space-y-5 mt-5 max-w-3xl mx-auto">
                                         {/* Show the last user message that triggered loading */}
                                         <div className="flex justify-end">
-                                            <div className="bg-gray-600 text-white px-5 py-3 rounded-2xl max-w-md font-noto font-normal text-base">
+                                            <div className="bg-neutral-700 text-white px-5 py-3 rounded-xl max-w-md font-noto font-light text-base">
                                                 {lastPrompt || "Generating video..."}
                                             </div>
                                         </div>
 
                                         {/* AI Loading Response - Left Aligned */}
                                         <div className="flex justify-start">
-                                            <div className="rounded-xl max-w-md">
-                                                <div className="bg-gray-600 rounded-lg w-full max-w-md h-48 flex items-center justify-center">
+                                            <div className="rounded-xl w-md">
+                                                <div className="bg-neutral-700 w-full h-64 flex items-center justify-center rounded-xl">
                                                     <div className="text-center text-white">
                                                         <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent mx-auto mb-4"></div>
                                                         <p className="text-sm opacity-80 font-noto">Generating video...</p>
