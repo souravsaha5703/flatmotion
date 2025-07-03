@@ -31,8 +31,7 @@ const ChatHistory = () => {
                     withCredentials: true
                 }
             );
-            console.log(response.data.data)
-            setChats(response.data.data);
+            setChats(response.data.chats);
         } catch (error) {
             console.error(error);
         }
