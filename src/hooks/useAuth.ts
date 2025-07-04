@@ -9,7 +9,7 @@ export const useAuth = () => {
     useEffect(() => {
         const getInitialSession = async () => {
             try {
-                const { data , error } = await supabase.auth.getSession()
+                const { data, error } = await supabase.auth.getSession()
                 if (error) {
                     console.error('Error getting initial session:', error)
                 } else {
@@ -36,5 +36,5 @@ export const useAuth = () => {
         }
     }, []);
 
-    return { user, session };
+    return { user, session, setSession };
 }

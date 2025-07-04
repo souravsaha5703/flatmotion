@@ -11,16 +11,17 @@ import Loader from '@/components/loader';
 import { Label } from "@/components/ui/label";
 import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/supabase/supabaseConfig';
 
 const ChatPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
-    const [lastPrompt, setLastPrompt] = useState<string>('');
     const [videoLoading, setVideoLoading] = useState<boolean>(false);
     const [chatMessages, setChatMessages] = useState<Message[]>([]);
     const [prompt, setPrompt] = useState<string>("");
+    const [videoGenerateState, setVideoGenerateState] = useState<string>('');
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const { id } = useParams();
-    const { session } = useAuth();
+    const { session, setSession } = useAuth();
     const hasFetchedRef = useRef(false);
 
     const fetchMessages = async () => {
@@ -58,14 +59,22 @@ const ChatPage = () => {
 
     const handleChatBtn = async () => {
         if (prompt.trim() !== '') {
-            setLastPrompt(prompt);
+            const tempId = crypto.randomUUID();
+            const newMessage: Message = {
+                id: tempId,
+                userMessage: prompt,
+                videoScript: '',
+                videoUrl: '',
+            }
+
+            setChatMessages(prev => [...prev, newMessage]);
             setPrompt('');
             if (session?.access_token) {
                 const access_token = session.access_token;
                 setVideoLoading(true);
                 try {
-                    await axios.put(
-                        `${import.meta.env.VITE_SERVER_URL}/modify_animation`,
+                    const response = await axios.put(
+                        `${import.meta.env.VITE_SERVER_URL}/add_message`,
                         { prompt: prompt, chat_id: id },
                         {
                             headers: {
@@ -76,15 +85,70 @@ const ChatPage = () => {
                             withCredentials: true
                         },
                     );
-                    fetchMessages();
+                    const { job_id } = response.data;
+                    await connectWebSocket(job_id, tempId);
+
                 } catch (error) {
                     console.error(error);
                 }
                 finally {
                     setVideoLoading(false);
+                    setVideoGenerateState('');
                 }
             }
         }
+    }
+
+    const connectWebSocket = async (job_id: string, tempId: string) => {
+        let access_token = session?.access_token;
+
+        if (!access_token) {
+            console.warn("Access token expired or missing. Refreshing...");
+            const { data, error } = await supabase.auth.refreshSession();
+            if (error || !data.session) {
+                console.error("Failed to refresh session:", error);
+                return;
+            }
+            access_token = data.session.access_token;
+            setSession(data.session);
+        }
+
+        const socket = new WebSocket(`${import.meta.env.VITE_SERVER_WS_URL}/ws/jobs/${job_id}?token=${access_token}`);
+
+        socket.onopen = () => {
+            console.log("Web socket connection opened");
+        }
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            if (data.status === 'completed') {
+                setVideoGenerateState(data.message);
+                setChatMessages(prev =>
+                    prev.map((msg) =>
+                        msg.id == tempId ? { ...msg, videoUrl: data.video_url, ideoScript: data.script } : msg)
+                );
+                socket.close();
+            } else if (data.status === "error") {
+                setVideoGenerateState("Error in generating video")
+                console.error("Job failed:", data.message);
+                socket.close();
+            }
+        }
+
+        socket.onerror = (err) => {
+            console.error("WebSocket error:", err);
+            socket.close();
+        };
+
+        socket.onclose = async (event) => {
+            if (event.code === 1008 || event.code === 4001) {
+                console.warn("Access token expired, refreshing...");
+                await connectWebSocket(job_id, tempId);
+            }
+            setVideoGenerateState('');
+            console.log('WebSocket closed');
+        };
     }
 
     useEffect(() => {
@@ -119,37 +183,28 @@ const ChatPage = () => {
 
                                             <div className="flex justify-start">
                                                 <div className="rounded-xl overflow-hidden w-md">
-                                                    <video muted controls className="rounded-lg w-full">
-                                                        <source src={msg.videoUrl} type="video/mp4" />
-                                                        Your browser does not support the video tag.
-                                                    </video>
+                                                    {msg.videoUrl ? (
+                                                        <video muted controls className="rounded-lg w-full">
+                                                            <source src={msg.videoUrl} type="video/mp4" />
+                                                            Your browser does not support the video tag.
+                                                        </video>)
+                                                        : (
+                                                            !videoLoading && (
+                                                                <div className="bg-neutral-700 w-full h-64 flex items-center justify-center rounded-xl">
+                                                                    <div className="text-center text-white">
+                                                                        <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent mx-auto mb-4"></div>
+                                                                        <p className="text-sm opacity-80 font-noto">
+                                                                            {videoGenerateState || "Generating video..."}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        )}
                                                 </div>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                                {videoLoading && (
-                                    <div className="space-y-5 mt-5 max-w-3xl mx-auto">
-                                        {/* Show the last user message that triggered loading */}
-                                        <div className="flex justify-end">
-                                            <div className="bg-neutral-700 text-white px-5 py-3 rounded-xl max-w-md font-noto font-light text-base">
-                                                {lastPrompt || "Generating video..."}
-                                            </div>
-                                        </div>
-
-                                        {/* AI Loading Response - Left Aligned */}
-                                        <div className="flex justify-start">
-                                            <div className="rounded-xl w-md">
-                                                <div className="bg-neutral-700 w-full h-64 flex items-center justify-center rounded-xl">
-                                                    <div className="text-center text-white">
-                                                        <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent mx-auto mb-4"></div>
-                                                        <p className="text-sm opacity-80 font-noto">Generating video...</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         )}
 
