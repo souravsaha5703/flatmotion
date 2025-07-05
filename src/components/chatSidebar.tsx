@@ -28,14 +28,14 @@ const ChatSidebar: React.FC = () => {
 
     return (
         <Sidebar
-            className={`border-r border-gray-300 dark:border-gray-600 shadow-lg transition-all duration-200`}
+            className={`border-r border-gray-600 shadow-lg transition-all duration-200`}
             collapsible="icon"
         >
-            <div className="p-2 border-b dark:border-gray-600 border-black flex">
-                <SidebarTrigger className="dark:text-gray-400 dark:hover:text-white text-gray-800 w-full h-8 flex items-center justify-center cursor-pointer" />
+            <div className="p-2 border-b border-gray-600 flex bg-neutral-900">
+                <SidebarTrigger className="text-gray-400 hover:text-white w-full h-8 flex items-center justify-center cursor-pointer" />
             </div>
 
-            <SidebarContent>
+            <SidebarContent className='bg-neutral-900'>
                 <SidebarGroup>
                     <SidebarGroupContent>
                         <SidebarMenu>
@@ -43,7 +43,7 @@ const ChatSidebar: React.FC = () => {
                                 <SidebarMenuButton
                                     onClick={handleNewChat}
                                     tooltip={isCollapsed ? "New Chat" : undefined}
-                                    className="dark:hover:bg-[#262626] hover:bg-black text-black hover:text-gray-100 dark:text-gray-100 dark:hover:text-white transition-colors w-full flex items-center justify-start cursor-pointer"
+                                    className="hover:bg-[#262626] text-gray-100 hover:text-white transition-colors w-full flex items-center justify-start cursor-pointer"
                                 >
                                     <SquarePen className="w-4" />
                                     {!isCollapsed && <span className="ml-1 font-noto font-medium">New Chat</span>}
@@ -54,7 +54,7 @@ const ChatSidebar: React.FC = () => {
                                 <SidebarMenuButton
                                     onClick={handleChatHistory}
                                     tooltip={isCollapsed ? "Chat History" : undefined}
-                                    className="dark:hover:bg-[#262626] hover:bg-black text-black hover:text-gray-100 dark:text-gray-100 dark:hover:text-white transition-colors w-full flex items-center justify-start cursor-pointer"
+                                    className="hover:bg-[#262626] text-gray-100 hover:text-white transition-colors w-full flex items-center justify-start cursor-pointer"
                                 >
                                     <MessageCircle className="h-5 w-5" />
                                     {!isCollapsed && <span className="ml-1 font-noto font-medium">Chat History</span>}

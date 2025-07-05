@@ -4,7 +4,7 @@ import ChatSidebar from '@/components/chatSidebar';
 import Navbar from '@/components/navbar';
 import { Button } from '@/components/ui/button';
 import { MoveUp } from 'lucide-react';
-import { easeIn, motion } from 'motion/react';
+import { easeIn, motion, easeInOut } from 'motion/react';
 import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -58,7 +58,7 @@ const NewChat = () => {
     return (
         <>
             <SidebarProvider>
-                <div className="h-screen flex w-full relative bg-neutral-800">
+                <div className="h-screen flex w-full relative bg-neutral-950">
                     <ChatSidebar />
 
                     <div className="flex-1 flex flex-col items-center h-screen relative">
@@ -67,22 +67,34 @@ const NewChat = () => {
                         <div className="w-full h-[90vh] overflow-y-auto px-4 pt-20 pb-40" ref={scrollAreaRef}>
                             {videoLoading && (
                                 <div className="space-y-5 mt-5 max-w-3xl mx-auto">
-                                    <div className="flex justify-end">
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.4, ease: easeInOut }}
+                                        className="flex justify-end">
                                         <div className="bg-neutral-700 text-white px-5 py-3 rounded-xl max-w-md font-noto font-light text-base">
                                             {lastPrompt || "Generating video..."}
                                         </div>
-                                    </div>
+                                    </motion.div>
 
-                                    <div className="flex justify-start">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.5, ease: easeInOut }}
+                                        className="flex justify-start">
                                         <div className="rounded-xl w-md">
-                                            <div className="bg-neutral-700 w-full h-64 flex items-center justify-center rounded-xl">
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ duration: 0.5, ease: easeInOut }}
+                                                className="bg-neutral-700 w-full h-64 flex items-center justify-center rounded-xl">
                                                 <div className="text-center text-white">
                                                     <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent mx-auto mb-4"></div>
                                                     <p className="text-sm opacity-80 font-noto">Generating video...</p>
                                                 </div>
-                                            </div>
+                                            </motion.div>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 </div>
                             )}
 
@@ -121,7 +133,7 @@ const NewChat = () => {
                         </div>
                     </div>
                 </div>
-            </SidebarProvider>
+            </SidebarProvider >
         </>
     )
 }

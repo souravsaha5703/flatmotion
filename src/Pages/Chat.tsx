@@ -4,7 +4,7 @@ import ChatSidebar from '@/components/chatSidebar';
 import Navbar from '@/components/navbar';
 import { Button } from '@/components/ui/button';
 import { MoveUp } from 'lucide-react';
-import { easeIn, motion } from 'motion/react';
+import { easeIn, easeInOut, motion } from 'motion/react';
 import type { Message } from '@/utils/AppInterfaces';
 import { useParams } from 'react-router-dom';
 import Loader from '@/components/loader';
@@ -160,7 +160,7 @@ const ChatPage = () => {
     return (
         <>
             <SidebarProvider>
-                <div className="h-screen flex w-full relative bg-neutral-800">
+                <div className="h-screen flex w-full relative bg-neutral-950">
                     <ChatSidebar />
 
                     <div className="flex-1 flex flex-col items-center h-screen relative">
@@ -175,33 +175,52 @@ const ChatPage = () => {
                                 <div className="max-w-3xl mx-auto">
                                     {chatMessages.map((msg) => (
                                         <div key={msg.id} className="space-y-12">
-                                            <div className="flex justify-end mt-5">
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.4, ease: easeInOut }}
+                                                className="flex justify-end mt-5">
                                                 <div className="bg-neutral-700 text-white px-5 py-3 rounded-xl max-w-md font-noto font-light text-base">
                                                     {msg.userMessage}
                                                 </div>
-                                            </div>
+                                            </motion.div>
 
-                                            <div className="flex justify-start">
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ duration: 0.5, ease: easeInOut }}
+                                                className="flex justify-start">
                                                 <div className="rounded-xl overflow-hidden w-md">
                                                     {msg.videoUrl ? (
-                                                        <video muted controls className="rounded-lg w-full">
+                                                        <motion.video
+                                                            muted
+                                                            controls
+                                                            preload="none"
+                                                            initial={{ opacity: 0 }}
+                                                            animate={{ opacity: 1 }}
+                                                            transition={{ duration: 0.5, ease: easeInOut }}
+                                                            className="rounded-lg w-full">
                                                             <source src={msg.videoUrl} type="video/mp4" />
                                                             Your browser does not support the video tag.
-                                                        </video>)
+                                                        </motion.video>)
                                                         : (
                                                             !videoLoading && (
-                                                                <div className="bg-neutral-700 w-full h-64 flex items-center justify-center rounded-xl">
+                                                                <motion.div
+                                                                    initial={{ opacity: 0, scale: 0.9 }}
+                                                                    animate={{ opacity: 1, scale: 1 }}
+                                                                    transition={{ duration: 0.5, ease: easeInOut }}
+                                                                    className="bg-neutral-700 w-full h-64 flex items-center justify-center rounded-xl">
                                                                     <div className="text-center text-white">
                                                                         <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent mx-auto mb-4"></div>
                                                                         <p className="text-sm opacity-80 font-noto">
                                                                             {videoGenerateState || "Generating video..."}
                                                                         </p>
                                                                     </div>
-                                                                </div>
+                                                                </motion.div>
                                                             )
                                                         )}
                                                 </div>
-                                            </div>
+                                            </motion.div>
                                         </div>
                                     ))}
                                 </div>
