@@ -15,7 +15,12 @@ import type { DialogProps } from '@/utils/AppInterfaces';
 import { Input } from '@/components/ui/input';
 import { Button } from '../ui/button';
 import { supabase } from '@/supabase/supabaseConfig';
+import { auth } from '@/firebase/firebaseConfig';
+import { signInAnonymously } from 'firebase/auth';
 import Loader from '../loader';
+import axios from 'axios';
+import { useAppDispatch } from '@/hooks/redux-hooks';
+import { addGuest } from '@/features/guest/guestSlice';
 
 const AuthDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen }) => {
     const [email, setEmail] = useState<string>('');
@@ -25,6 +30,8 @@ const AuthDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen }) =>
     const [loading, setLoading] = useState<boolean>(false);
     const [otpLoading, setOtpLoading] = useState<boolean>(false);
     const [isOTPDialogOpen, setIsOTPDialogOpen] = useState<boolean>(false);
+    const [guestLoading, setGuestLoading] = useState<boolean>(false);
+    const dispatch = useAppDispatch();
 
     const handleSendCodeBtn = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -76,6 +83,29 @@ const AuthDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen }) =>
         }
     }
 
+    const handleGuestTryBtn = async () => {
+        try {
+            setGuestLoading(true);
+            const result = await signInAnonymously(auth);
+            const response = await axios.post(
+                `${import.meta.env.VITE_SERVER_URL}/create_guest`,
+                { uid: result.user.uid },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true
+                },
+            );
+            dispatch(addGuest(response.data.guestData[0]));
+            setGuestLoading(false);
+            setIsDialogOpen(false);
+        } catch (error) {
+            console.error(error);
+            setGuestLoading(false);
+        }
+    }
+
     return (
         <>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -120,6 +150,14 @@ const AuthDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen }) =>
                             </Button>
                             {error && <span className='font-noto mt-2 text-sm text-red-600 font-normal'>{error}</span>}
                         </form>
+                        {guestLoading ? (
+                            <div className='w-full flex items-center justify-center'>
+                                <Loader />
+                            </div>
+                        ) : (
+                            <Button onClick={handleGuestTryBtn} variant={'link'} className='cursor-pointer font-noto text-base text-center text-gray-300 font-light'>Try as a guest</Button>
+                        )}
+
                     </div>
                 </DialogContent>
             </Dialog>

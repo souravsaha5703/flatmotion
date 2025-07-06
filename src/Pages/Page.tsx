@@ -10,39 +10,46 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
 import Loader from '@/components/loader';
+import AuthDialog from '@/components/Dialogs/AuthDialog';
 
 const Page: React.FC = () => {
+    const [isAuthDialogOpen, setIsAuthDialogOpen] = useState<boolean>(false);
     const [prompt, setPrompt] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { session } = useAuth();
+    const { session,user } = useAuth();
 
     const handlePromptSend = async () => {
         if (prompt.trim() !== '') {
-            const customizedPrompt: string = prompt + " using manim animation";
-            if (session?.access_token) {
-                setLoading(true);
-                const access_token = session.access_token;
-                try {
-                    const response = await axios.post(
-                        `${import.meta.env.VITE_SERVER_URL}/generate`,
-                        { prompt: customizedPrompt },
-                        {
-                            headers: {
-                                Authorization: `Bearer ${access_token}`,
-                                "x-refresh-token": session.refresh_token,
-                                'Content-Type': 'application/json',
+            if (user == null) {
+                setIsAuthDialogOpen(true);
+            } else {
+                setIsAuthDialogOpen(false);
+                const customizedPrompt: string = prompt + " using manim animation";
+                if (session?.access_token) {
+                    setLoading(true);
+                    const access_token = session.access_token;
+                    try {
+                        const response = await axios.post(
+                            `${import.meta.env.VITE_SERVER_URL}/generate`,
+                            { prompt: customizedPrompt },
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${access_token}`,
+                                    "x-refresh-token": session.refresh_token,
+                                    'Content-Type': 'application/json',
+                                },
+                                withCredentials: true
                             },
-                            withCredentials: true
-                        },
-                    );
-                    setLoading(false);
-                    dispatch(addChat(response.data.data[0]));
-                    navigate(`/chat/${response.data.data[0].id}`);
-                } catch (error) {
-                    setLoading(false);
-                    console.error(error);
+                        );
+                        setLoading(false);
+                        dispatch(addChat(response.data.data[0]));
+                        navigate(`/chat/${response.data.data[0].id}`);
+                    } catch (error) {
+                        setLoading(false);
+                        console.error(error);
+                    }
                 }
             }
         }
@@ -107,6 +114,7 @@ const Page: React.FC = () => {
                     </motion.div>
                 </div>
             </section>
+            <AuthDialog isDialogOpen={isAuthDialogOpen} setIsDialogOpen={setIsAuthDialogOpen} />
         </>
     )
 }

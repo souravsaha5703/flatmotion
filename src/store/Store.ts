@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import chatReducer from '@/features/chat/chatSlice';
 import promptReducer from '@/features/prompt/promptSlice';
+import guestReducer from '@/features/guest/guestSlice';
 
 export const store = configureStore({
     reducer: {
         chat: chatReducer,
-        prompt:promptReducer
+        prompt:promptReducer,
+        guest:guestReducer
     },
 });
 

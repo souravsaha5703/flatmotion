@@ -16,3 +16,10 @@ export interface Chat {
     messages: Message[];
     user_id: string;
 }
+
+export interface GuestData {
+    id:string;
+    guest_uid:string;
+    credits:number;
+    is_guest:boolean
+}
