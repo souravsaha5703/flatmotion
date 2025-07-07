@@ -21,6 +21,7 @@ import Loader from '../loader';
 import axios from 'axios';
 import { useAppDispatch } from '@/hooks/redux-hooks';
 import { addGuest } from '@/features/guest/guestSlice';
+import { useNavigate } from 'react-router-dom';
 
 const AuthDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen }) => {
     const [email, setEmail] = useState<string>('');
@@ -32,6 +33,7 @@ const AuthDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen }) =>
     const [isOTPDialogOpen, setIsOTPDialogOpen] = useState<boolean>(false);
     const [guestLoading, setGuestLoading] = useState<boolean>(false);
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const handleSendCodeBtn = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -100,6 +102,7 @@ const AuthDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen }) =>
             dispatch(addGuest(response.data.guestData[0]));
             setGuestLoading(false);
             setIsDialogOpen(false);
+            navigate('/guest_chat');
         } catch (error) {
             console.error(error);
             setGuestLoading(false);
