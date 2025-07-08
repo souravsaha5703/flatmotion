@@ -6,7 +6,6 @@ import { easeIn, easeInOut, motion } from 'motion/react';
 import type { Message } from '@/utils/AppInterfaces';
 import Loader from '@/components/loader';
 import { Label } from "@/components/ui/label";
-import axios from 'axios';
 import { useAppSelector, useAppDispatch } from '@/hooks/redux-hooks';
 import { useNavigate } from 'react-router-dom';
 import { addGuest } from '@/features/guest/guestSlice';
@@ -52,26 +51,15 @@ const GuestChat = () => {
 
                 setChatMessages(prev => [...prev, newMessage]);
                 setPrompt('');
-
                 setVideoLoading(true);
                 const customizedPrompt: string = prompt + " using manim animation";
+
                 try {
-                    const response = await axios.post(
-                        `${import.meta.env.VITE_SERVER_URL}/add_guest_message`,
-                        { prompt: customizedPrompt, id: guestUser.id },
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            withCredentials: true
-                        },
-                    );
-                    const { job_id } = response.data;
-                    await connectWebSocket(job_id, tempId);
+                    await connectWebSocket(customizedPrompt, guestUser.id, tempId);
                 } catch (error) {
                     console.error(error);
-                }
-                finally {
+                    setVideoGenerateState("Error generating video");
+                } finally {
                     setVideoLoading(false);
                     setVideoGenerateState('');
                 }
@@ -79,16 +67,23 @@ const GuestChat = () => {
         }
     }
 
-    const connectWebSocket = async (job_id: string, tempId: string) => {
-
-        const socket = new WebSocket(`${import.meta.env.VITE_SERVER_WS_URL}/ws/guest/jobs/${job_id}`);
+    const connectWebSocket = async (prompt: string, guestId: string, tempId: string) => {
+        const socket = new WebSocket(`${import.meta.env.VITE_SERVER_WS_URL}/ws/guest/jobs`);
 
         socket.onopen = () => {
             console.log("Web socket connection opened");
+            socket.send(JSON.stringify({
+                prompt: prompt,
+                guest_id: guestId
+            }));
         }
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
+
+            if (data.status === "started" || data.status === "rendering") {
+                setVideoGenerateState(data.message);
+            }
 
             if (data.status === 'completed') {
                 setVideoGenerateState(data.message);
@@ -96,11 +91,14 @@ const GuestChat = () => {
                     prev.map((msg) =>
                         msg.id == tempId ? { ...msg, videoUrl: data.video_url, videoScript: data.script } : msg)
                 );
+                console.log("okay")
                 dispatch(addGuest(data.creditData[0]));
                 socket.close();
-            } else if (data.status === "error") {
+            }
+
+            if (data?.status == "error") {
                 setVideoGenerateState("Error in generating video")
-                console.error("Job failed:", data.message);
+                console.error("Job failed:", data?.message);
                 socket.close();
             }
         }
@@ -110,11 +108,7 @@ const GuestChat = () => {
             socket.close();
         };
 
-        socket.onclose = async (event) => {
-            if (event.code === 1008 || event.code === 4001) {
-                console.warn("Access denied, retrying...");
-                await connectWebSocket(job_id, tempId);
-            }
+        socket.onclose = () => {
             setVideoGenerateState('');
             console.log('WebSocket closed');
         };
