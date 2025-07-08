@@ -3,6 +3,15 @@ export interface DialogProps {
     setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+export interface Error {
+    title: string;
+    description: string;
+}
+
+export interface ErrorDialogProps extends DialogProps{
+    error: Error | null;
+}
+
 export interface Message {
     id: string;
     userMessage: string;

@@ -126,7 +126,7 @@ const ChatPage = () => {
                 setVideoGenerateState(data.message);
                 setChatMessages(prev =>
                     prev.map((msg) =>
-                        msg.id == tempId ? { ...msg, videoUrl: data.video_url, ideoScript: data.script } : msg)
+                        msg.id == tempId ? { ...msg, videoUrl: data.video_url, videoScript: data.script } : msg)
                 );
                 socket.close();
             } else if (data.status === "error") {

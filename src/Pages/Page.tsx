@@ -11,14 +11,18 @@ import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
 import Loader from '@/components/loader';
 import AuthDialog from '@/components/Dialogs/AuthDialog';
+import ErrorDialog from '@/components/Dialogs/ErrorDialog';
+import type { Error } from '@/utils/AppInterfaces';
 
 const Page: React.FC = () => {
     const [isAuthDialogOpen, setIsAuthDialogOpen] = useState<boolean>(false);
+    const [isErrorDialogOpen, setIsErrorDialogOpen] = useState<boolean>(false);
     const [prompt, setPrompt] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<Error | null>(null);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { session,user } = useAuth();
+    const { session, user } = useAuth();
 
     const handlePromptSend = async () => {
         if (prompt.trim() !== '') {
@@ -48,7 +52,13 @@ const Page: React.FC = () => {
                         navigate(`/chat/${response.data.data[0].id}`);
                     } catch (error) {
                         setLoading(false);
-                        console.error(error);
+                        if (axios.isAxiosError(error)) {
+                            setError({
+                                title: error.response?.data?.err,
+                                description: error.response?.data?.message
+                            });
+                        }
+                        setIsErrorDialogOpen(true);
                     }
                 }
             }
@@ -100,6 +110,12 @@ const Page: React.FC = () => {
                             placeholder='E.g., “ Animate a circle rotating ”'
                             value={prompt}
                             onChange={(e) => setPrompt(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handlePromptSend();
+                                }
+                            }}
                             className="w-full text-base pl-6 py-4 pr-4 resize-none border-none outline-none focus:outline-none focus:ring-0 bg-transparent font-noto text-gray-100 placeholder:text-gray-300 placeholder:text-base placeholder:font-noto placeholder:font-medium font-normal"
                         />
                         <div className='relative w-full h-12'>
@@ -115,6 +131,7 @@ const Page: React.FC = () => {
                 </div>
             </section>
             <AuthDialog isDialogOpen={isAuthDialogOpen} setIsDialogOpen={setIsAuthDialogOpen} />
+            <ErrorDialog isDialogOpen={isErrorDialogOpen} setIsDialogOpen={setIsErrorDialogOpen} error={error} />
         </>
     )
 }
