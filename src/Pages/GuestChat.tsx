@@ -140,7 +140,7 @@ const GuestChat = () => {
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ duration: 0.4, ease: easeInOut }}
                                             className="flex justify-end mt-5">
-                                            <div className="bg-neutral-700 text-white px-5 py-3 rounded-xl max-w-md font-noto font-light text-base">
+                                            <div className="bg-neutral-700 text-white px-5 py-3 rounded-xl max-w-md font-noto font-light text-base max-[425px]:text-sm">
                                                 {msg.userMessage}
                                             </div>
                                         </motion.div>
@@ -150,7 +150,7 @@ const GuestChat = () => {
                                             animate={{ opacity: 1, scale: 1 }}
                                             transition={{ duration: 0.5, ease: easeInOut }}
                                             className="flex justify-start">
-                                            <div className="rounded-xl overflow-hidden w-md">
+                                            <div className="rounded-xl overflow-hidden w-md max-[500px]:w-sm max-[425px]:w-[300px] max-[350px]:w-[280px]">
                                                 {msg.videoUrl ? (
                                                     <motion.video
                                                         muted

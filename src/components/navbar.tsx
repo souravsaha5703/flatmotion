@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { easeIn, motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
-import { ModeToggle } from './mode-toggle';
+// import { ModeToggle } from './mode-toggle';
 import AuthDialog from './Dialogs/AuthDialog';
 import { useAuth } from '@/hooks/useAuth';
-import { User, Mail } from 'lucide-react';
+import { User, Mail, PanelRight } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from '@/supabase/supabaseConfig';
 import Loader from './loader';
+import { useSidebar } from './ui/sidebar';
 
 interface NavbarProps {
     position?: string;
@@ -24,6 +25,7 @@ const Navbar: React.FC<NavbarProps> = ({ position = "fixed", page = "chat" }) =>
     const [isAuthDialogOpen, setIsAuthDialogOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const { user } = useAuth();
+    const { toggleSidebar, setOpen } = useSidebar();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -37,6 +39,11 @@ const Navbar: React.FC<NavbarProps> = ({ position = "fixed", page = "chat" }) =>
             window.removeEventListener('scroll', handleScroll);
         }
     }, []);
+
+    const handleSidebarToggle = () => {
+        toggleSidebar();
+        setOpen(true);
+    }
 
     const handleBtn = () => {
         setIsAuthDialogOpen(true);
@@ -61,9 +68,19 @@ const Navbar: React.FC<NavbarProps> = ({ position = "fixed", page = "chat" }) =>
                 className={`${position} left-0 top-0 w-full z-50 ${page == "chat" ? "bg-neutral-950" : "bg-transparent"} ${isScrolled && "bg-black/50 backdrop-blur-md shadow-lg"}`}
             >
                 <div className="container mx-auto px-3 py-3 flex justify-between items-center max-[426px]:px-5">
+                    {page == "chat" || page == "history" ? (
+                        <button
+                            onClick={handleSidebarToggle}
+                            className="p-2 rounded-full text-gray-200 md:hidden"
+                        >
+                            <PanelRight className="h-6 w-6" />
+                        </button>
+                    ) : (
+                        <></>
+                    )}
                     <h1 className='font-oswald text-2xl font-semibold text-white'>Flatmotion</h1>
                     <div className='flex gap-4'>
-                        <ModeToggle />
+                        {/* <ModeToggle /> */}
                         {user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>

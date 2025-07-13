@@ -113,14 +113,14 @@ const ChatHistory = () => {
                 <div className="min-h-screen flex w-full relative bg-neutral-950">
                     <ChatSidebar />
                     <div className="flex-1 flex flex-col items-center h-screen relative">
-                        <Navbar position="static" />
+                        <Navbar page='history' position='sticky' />
                         <div className="w-full mx-auto px-4 py-8">
                             {loading ? (
-                                <div className="max-w-4xl mx-auto flex items-center justify-center">
+                                <div className="max-w-4xl mt-10 mx-auto flex items-center justify-center">
                                     <Loader />
                                 </div>
                             ) : (
-                                <div className="max-w-4xl mx-auto">
+                                <div className="max-w-4xl mx-auto mt-10">
                                     <div className="flex items-center mb-8">
                                         <Clock className="h-8 w-8 text-white mr-3" />
                                         <h1 className="text-3xl font-bold text-white font-noto">Chat History</h1>
