@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import { SidebarProvider } from '@/components/ui/sidebar';
 import ChatSidebar from '@/components/chatSidebar';
 import Navbar from '@/components/navbar';
 import { Button } from '@/components/ui/button';
@@ -193,108 +192,106 @@ const ChatPage = () => {
 
     return (
         <>
-            <SidebarProvider>
-                <div className="h-screen flex w-full relative bg-neutral-950">
-                    <ChatSidebar />
+            <div className="h-screen flex w-full relative bg-neutral-950">
+                <ChatSidebar />
 
-                    <div className="flex-1 flex flex-col items-center h-screen relative">
-                        <Navbar position="absolute" />
+                <div className="flex-1 flex flex-col items-center h-screen relative">
+                    <Navbar position="absolute" />
 
-                        {loading ? (
-                            <div className='w-full h-[90vh] px-4 pt-20 pb-40 flex items-center justify-center'>
-                                <Loader />
-                            </div>
-                        ) : (
-                            <div className="w-full h-[90vh] overflow-y-auto px-4 pt-20 pb-40" ref={scrollAreaRef}>
-                                <div className="max-w-3xl mx-auto">
-                                    {chatMessages.map((msg) => (
-                                        <div key={msg.id} className="space-y-12">
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ duration: 0.4, ease: easeInOut }}
-                                                className="flex justify-end mt-5">
-                                                <div className="bg-neutral-700 text-white px-5 py-3 rounded-xl max-w-md font-noto font-light text-base max-[425px]:text-sm">
-                                                    {msg.userMessage}
-                                                </div>
-                                            </motion.div>
-
-                                            <motion.div
-                                                initial={{ opacity: 0, scale: 0.95 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                transition={{ duration: 0.5, ease: easeInOut }}
-                                                className="flex justify-start">
-                                                <div className="rounded-xl overflow-hidden w-md max-[500px]:w-sm max-[425px]:w-[300px] max-[350px]:w-[280px]">
-                                                    {msg.videoUrl ? (
-                                                        <motion.video
-                                                            muted
-                                                            controls
-                                                            preload="none"
-                                                            initial={{ opacity: 0 }}
-                                                            animate={{ opacity: 1 }}
-                                                            transition={{ duration: 0.5, ease: easeInOut }}
-                                                            className="rounded-lg w-full">
-                                                            <source src={msg.videoUrl} type="video/mp4" />
-                                                            Your browser does not support the video tag.
-                                                        </motion.video>)
-                                                        : (
-                                                            !videoLoading && (
-                                                                <motion.div
-                                                                    initial={{ opacity: 0, scale: 0.9 }}
-                                                                    animate={{ opacity: 1, scale: 1 }}
-                                                                    transition={{ duration: 0.5, ease: easeInOut }}
-                                                                    className="bg-neutral-700 w-full h-64 flex items-center justify-center rounded-xl">
-                                                                    <div className="text-center text-white">
-                                                                        <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent mx-auto mb-4"></div>
-                                                                        <p className="text-sm opacity-80 font-noto">
-                                                                            {videoGenerateState || "Generating video..."}
-                                                                        </p>
-                                                                    </div>
-                                                                </motion.div>
-                                                            )
-                                                        )}
-                                                </div>
-                                            </motion.div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Chat Input - fixed at bottom center */}
-                        <div className="w-full px-4 py-4 absolute bottom-0 left-0">
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.7, ease: easeIn }}
-                                className="max-w-3xl mx-auto bg-[#313131] rounded-3xl shadow-md w-full relative"
-                            >
-                                <textarea
-                                    placeholder='Ask a follow-up'
-                                    value={prompt}
-                                    onChange={(e) => setPrompt(e.target.value)}
-                                    className="w-full text-base pl-6 py-4 pr-14 resize-none border-none outline-none bg-transparent font-noto text-gray-100 placeholder:text-gray-300 placeholder:font-medium placeholder:text-base"
-                                />
-                                <div className='relative w-full h-11 px-4 flex justify-between'>
-                                    <div className="flex items-center">
-                                        <Label htmlFor="newMessage" className="text-xs text-gray-300 font-normal font-noto">
-                                            Note : Want to create fresh scene or video please proceed with new chat
-                                        </Label>
-                                    </div>
-                                    <Button
-                                        onClick={handleChatBtn}
-                                        disabled={prompt == "" || videoLoading}
-                                        size={'icon'}
-                                        className="bg-white flex items-center justify-center hover:bg-slate-100 cursor-pointer rounded-full"
-                                    >
-                                        <MoveUp className='text-black size-4' />
-                                    </Button>
-                                </div>
-                            </motion.div>
+                    {loading ? (
+                        <div className='w-full h-[90vh] px-4 pt-20 pb-40 flex items-center justify-center'>
+                            <Loader />
                         </div>
+                    ) : (
+                        <div className="w-full h-[90vh] overflow-y-auto px-4 pt-20 pb-40" ref={scrollAreaRef}>
+                            <div className="max-w-3xl mx-auto">
+                                {chatMessages.map((msg) => (
+                                    <div key={msg.id} className="space-y-12">
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ duration: 0.4, ease: easeInOut }}
+                                            className="flex justify-end mt-5">
+                                            <div className="bg-neutral-700 text-white px-5 py-3 rounded-xl max-w-md font-noto font-light text-base max-[425px]:text-sm">
+                                                {msg.userMessage}
+                                            </div>
+                                        </motion.div>
+
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ duration: 0.5, ease: easeInOut }}
+                                            className="flex justify-start">
+                                            <div className="rounded-xl overflow-hidden w-md max-[500px]:w-sm max-[425px]:w-[300px] max-[350px]:w-[280px]">
+                                                {msg.videoUrl ? (
+                                                    <motion.video
+                                                        muted
+                                                        controls
+                                                        preload="none"
+                                                        initial={{ opacity: 0 }}
+                                                        animate={{ opacity: 1 }}
+                                                        transition={{ duration: 0.5, ease: easeInOut }}
+                                                        className="rounded-lg w-full">
+                                                        <source src={msg.videoUrl} type="video/mp4" />
+                                                        Your browser does not support the video tag.
+                                                    </motion.video>)
+                                                    : (
+                                                        !videoLoading && (
+                                                            <motion.div
+                                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                                animate={{ opacity: 1, scale: 1 }}
+                                                                transition={{ duration: 0.5, ease: easeInOut }}
+                                                                className="bg-neutral-700 w-full h-64 flex items-center justify-center rounded-xl">
+                                                                <div className="text-center text-white">
+                                                                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent mx-auto mb-4"></div>
+                                                                    <p className="text-sm opacity-80 font-noto">
+                                                                        {videoGenerateState || "Generating video..."}
+                                                                    </p>
+                                                                </div>
+                                                            </motion.div>
+                                                        )
+                                                    )}
+                                            </div>
+                                        </motion.div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Chat Input - fixed at bottom center */}
+                    <div className="w-full px-4 py-4 absolute bottom-0 left-0">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.7, ease: easeIn }}
+                            className="max-w-3xl mx-auto bg-[#313131] rounded-3xl shadow-md w-full relative"
+                        >
+                            <textarea
+                                placeholder='Ask a follow-up'
+                                value={prompt}
+                                onChange={(e) => setPrompt(e.target.value)}
+                                className="w-full text-base pl-6 py-4 pr-14 resize-none border-none outline-none bg-transparent font-noto text-gray-100 placeholder:text-gray-300 placeholder:font-medium placeholder:text-base"
+                            />
+                            <div className='relative w-full h-11 px-4 flex justify-between'>
+                                <div className="flex items-center">
+                                    <Label htmlFor="newMessage" className="text-xs text-gray-300 font-normal font-noto">
+                                        Note : Want to create fresh scene or video please proceed with new chat
+                                    </Label>
+                                </div>
+                                <Button
+                                    onClick={handleChatBtn}
+                                    disabled={prompt == "" || videoLoading}
+                                    size={'icon'}
+                                    className="bg-white flex items-center justify-center hover:bg-slate-100 cursor-pointer rounded-full"
+                                >
+                                    <MoveUp className='text-black size-4' />
+                                </Button>
+                            </div>
+                        </motion.div>
                     </div>
                 </div>
-            </SidebarProvider>
+            </div>
             <Dialog open={messageFetchError} onOpenChange={setMessageFetchError}>
                 <DialogContent>
                     <DialogHeader>

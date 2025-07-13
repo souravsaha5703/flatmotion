@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { Button } from "@/components/ui/button";
 import { Sparkles, MoveUp } from 'lucide-react';
 import AnimatedGradientBackground from '@/components/animated-gradient';
-import Navbar from '@/components/navbar';
+import HomeNavbar from '@/components/homeNavbar';
 import { useAppDispatch } from '@/hooks/redux-hooks';
 import { addChat } from '@/features/chat/chatSlice';
 import { useNavigate } from 'react-router-dom';
@@ -67,7 +67,7 @@ const Page: React.FC = () => {
 
     return (
         <>
-            <Navbar page='home' />
+            <HomeNavbar page='home' />
             <section className="relative min-h-screen px-5 py-10 flex items-center justify-center overflow-hidden bg-black max-[426px]:px-0">
                 <AnimatedGradientBackground />
                 <div className="relative z-10 text-center max-w-7xl mx-auto flex items-center justify-center flex-col max-[426px]:px-4">

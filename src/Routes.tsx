@@ -5,6 +5,7 @@ import ChatPage from './Pages/Chat.tsx';
 import NewChat from './Pages/NewChat.tsx';
 import ChatHistory from './Pages/ChatHistory.tsx';
 import GuestChat from './Pages/GuestChat.tsx';
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const AppRouter = () => {
     return (
@@ -12,10 +13,10 @@ const AppRouter = () => {
             <Routes>
                 <Route path='/' element={<App />}>
                     <Route path='' element={<Page />} />
-                    <Route path='chat' element={<NewChat />}/>
-                    <Route path='chat/:id' element={<ChatPage />} />
-                    <Route path='history' element={<ChatHistory />}/>
-                    <Route path='guest_chat' element={<GuestChat />}/>
+                    <Route path='chat' element={<SidebarProvider><NewChat /></SidebarProvider>} />
+                    <Route path='chat/:id' element={<SidebarProvider><ChatPage /></SidebarProvider>} />
+                    <Route path='history' element={<SidebarProvider><ChatHistory /></SidebarProvider>} />
+                    <Route path='guest_chat' element={<GuestChat />} />
                 </Route>
             </Routes>
         </BrowserRouter>
