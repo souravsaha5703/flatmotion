@@ -8,9 +8,19 @@ import { easeIn, motion, easeInOut } from 'motion/react';
 import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogClose,
+    DialogFooter
+} from "@/components/ui/dialog";
 
 const NewChat = () => {
     const [lastPrompt, setLastPrompt] = useState<string>('');
+    const [messageSendError, setMessageSendError] = useState<boolean>(false);
     const [videoLoading, setVideoLoading] = useState<boolean>(false);
     const [prompt, setPrompt] = useState<string>("");
     const { session } = useAuth();
@@ -41,9 +51,10 @@ const NewChat = () => {
                     navigate(`/chat/${response.data.data[0].id}`);
                 } catch (error) {
                     console.error(error);
+                    setMessageSendError(true);
                 }
                 finally {
-                    setVideoLoading(true);
+                    setVideoLoading(false);
                 }
             }
         }
@@ -54,6 +65,34 @@ const NewChat = () => {
             scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
         }
     }, [videoLoading]);
+
+    const handleRetryBtn = async () => {
+        setMessageSendError(false);
+        setVideoLoading(true);
+        const customizedPrompt: string = lastPrompt + " using manim animation";
+        if (session?.access_token) {
+            try {
+                const access_token = session.access_token;
+                const response = await axios.post(
+                    `${import.meta.env.VITE_SERVER_URL}/generate`,
+                    { prompt: customizedPrompt },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${access_token}`,
+                            "x-refresh-token": session.refresh_token,
+                            'Content-Type': 'application/json',
+                        },
+                        withCredentials: true
+                    },
+                );
+                setVideoLoading(false);
+                navigate(`/chat/${response.data.data[0].id}`);
+            } catch (error) {
+                setVideoLoading(false);
+                setMessageSendError(true);
+            }
+        }
+    }
 
     return (
         <>
@@ -134,6 +173,24 @@ const NewChat = () => {
                     </div>
                 </div>
             </SidebarProvider >
+            <Dialog open={messageSendError} onOpenChange={setMessageSendError}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className='text-left font-noto font-semibold'>
+                            Something went wrong
+                        </DialogTitle>
+                        <DialogDescription className='text-left font-noto font-medium'>
+                            An error occurred while fetching messages.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={handleRetryBtn} className='font-noto font-medium cursor-pointer'>Retry</Button>
+                        <DialogClose asChild>
+                            <Button variant={'outline'}>Close</Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }

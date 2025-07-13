@@ -58,7 +58,7 @@ const GuestChat = () => {
                     await connectWebSocket(customizedPrompt, guestUser.id, tempId);
                 } catch (error) {
                     console.error(error);
-                    setVideoGenerateState("Error generating video");
+                    setVideoGenerateState("Error in generating video");
                 } finally {
                     setVideoLoading(false);
                     setVideoGenerateState('');
@@ -227,7 +227,6 @@ const GuestChat = () => {
                     </div>
                 </div>
             </div>
-
         </>
     )
 }

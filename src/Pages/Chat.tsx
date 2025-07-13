@@ -12,10 +12,24 @@ import { Label } from "@/components/ui/label";
 import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/supabase/supabaseConfig';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogClose,
+    DialogFooter
+} from "@/components/ui/dialog";
+import ErrorDialog from '@/components/Dialogs/ErrorDialog';
+import type { Error } from '@/utils/AppInterfaces';
 
 const ChatPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [videoLoading, setVideoLoading] = useState<boolean>(false);
+    const [messageFetchError, setMessageFetchError] = useState<boolean>(false);
+    const [isErrorDialogOpen, setIsErrorDialogOpen] = useState<boolean>(false);
+    const [error, setError] = useState<Error | null>(null);
     const [chatMessages, setChatMessages] = useState<Message[]>([]);
     const [prompt, setPrompt] = useState<string>("");
     const [videoGenerateState, setVideoGenerateState] = useState<string>('');
@@ -42,6 +56,7 @@ const ChatPage = () => {
             setChatMessages(response.data.data[0].messages);
         } catch (error) {
             console.error(error);
+            setMessageFetchError(true);
         }
     };
 
@@ -90,6 +105,13 @@ const ChatPage = () => {
 
                 } catch (error) {
                     console.error(error);
+                    if (axios.isAxiosError(error)) {
+                        setError({
+                            title: error.response?.data?.err,
+                            description: error.response?.data?.message
+                        });
+                    }
+                    setIsErrorDialogOpen(true);
                 }
                 finally {
                     setVideoLoading(false);
@@ -156,6 +178,18 @@ const ChatPage = () => {
             scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
         }
     }, [chatMessages, videoLoading]);
+
+    const handleRetryBtn = async () => {
+        setMessageFetchError(false);
+        setLoading(true);
+        try {
+            await fetchMessages();
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            setMessageFetchError(true);
+        }
+    }
 
     return (
         <>
@@ -261,6 +295,25 @@ const ChatPage = () => {
                     </div>
                 </div>
             </SidebarProvider>
+            <Dialog open={messageFetchError} onOpenChange={setMessageFetchError}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className='text-left font-noto font-semibold'>
+                            Something went wrong
+                        </DialogTitle>
+                        <DialogDescription className='text-left font-noto font-medium'>
+                            An error occurred while fetching messages.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={handleRetryBtn} className='font-noto font-medium cursor-pointer'>Retry</Button>
+                        <DialogClose asChild>
+                            <Button variant={'outline'}>Close</Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            <ErrorDialog isDialogOpen={isErrorDialogOpen} setIsDialogOpen={setIsErrorDialogOpen} error={error} />
         </>
     )
 }
