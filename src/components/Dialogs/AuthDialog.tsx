@@ -165,30 +165,30 @@ const AuthDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen }) =>
                 </DialogContent>
             </Dialog>
             <Dialog open={isOTPDialogOpen} onOpenChange={setIsOTPDialogOpen}>
-                <DialogContent>
+                <DialogContent className='max-[425px]:justify-center'>
                     <DialogHeader>
-                        <DialogTitle className='text-center font-noto text-3xl font-semibold'>
+                        <DialogTitle className='text-center font-noto text-3xl max-[520px]:text-2xl font-semibold max-[375px]:text-lg'>
                             OTP Verification
                         </DialogTitle>
-                        <DialogDescription className='text-center font-noto text-base font-medium'>
+                        <DialogDescription className='text-center font-noto text-base font-medium px-2 max-[375px]:text-sm'>
                             We have sent a 6-digit code to {email}
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="px-8 pb-10 space-y-8 flex flex-col items-center justify-center">
+                    <div className="px-8 max-[520px]:px-4 pb-10 max-[520px]:pb-6 space-y-8 max-[520px]:space-y-6 flex flex-col items-center justify-center">
                         <div className="flex justify-center">
                             <InputOTP
                                 value={otp}
                                 onChange={setOtp}
                                 maxLength={6}
-                                className="gap-3"
+                                className="gap-3 max-[520px]:gap-2"
                             >
-                                <InputOTPGroup className="gap-3">
-                                    <InputOTPSlot index={0} className="w-14 h-14 text-xl font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
-                                    <InputOTPSlot index={1} className="w-14 h-14 text-xl font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
-                                    <InputOTPSlot index={2} className="w-14 h-14 text-xl font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
-                                    <InputOTPSlot index={3} className="w-14 h-14 text-xl font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
-                                    <InputOTPSlot index={4} className="w-14 h-14 text-xl font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
-                                    <InputOTPSlot index={5} className="w-14 h-14 text-xl font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
+                                <InputOTPGroup className="gap-3 max-[520px]:gap-2">
+                                    <InputOTPSlot index={0} className="w-14 h-14 max-[520px]:w-10 max-[520px]:h-10 max-[375px]:w-8 max-[375px]:h-8 text-xl max-[520px]:text-lg font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
+                                    <InputOTPSlot index={1} className="w-14 h-14 max-[520px]:w-10 max-[520px]:h-10 max-[375px]:w-8 max-[375px]:h-8 text-xl max-[520px]:text-lg font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
+                                    <InputOTPSlot index={2} className="w-14 h-14 max-[520px]:w-10 max-[520px]:h-10 max-[375px]:w-8 max-[375px]:h-8 text-xl max-[520px]:text-lg font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
+                                    <InputOTPSlot index={3} className="w-14 h-14 max-[520px]:w-10 max-[520px]:h-10 max-[375px]:w-8 max-[375px]:h-8 text-xl max-[520px]:text-lg font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
+                                    <InputOTPSlot index={4} className="w-14 h-14 max-[520px]:w-10 max-[520px]:h-10 max-[375px]:w-8 max-[375px]:h-8 text-xl max-[520px]:text-lg font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
+                                    <InputOTPSlot index={5} className="w-14 h-14 max-[520px]:w-10 max-[520px]:h-10 max-[375px]:w-8 max-[375px]:h-8 text-xl max-[520px]:text-lg font-bold rounded-md border border-gray-200 focus:border-orange-400 transition-colors" />
                                 </InputOTPGroup>
                             </InputOTP>
                         </div>
@@ -196,17 +196,17 @@ const AuthDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen }) =>
                         <Button
                             onClick={handleOTPSubmit}
                             disabled={otpLoading}
-                            className="w-full h-12 font-noto font-semibold text-lg rounded-md shadow-lg cursor-pointer"
+                            className="w-full h-12 max-[520px]:h-10 font-noto font-semibold text-lg max-[520px]:text-base rounded-md shadow-lg cursor-pointer"
                         >
                             {otpLoading ? (
                                 <Loader />
                             ) : "Verify OTP"}
                         </Button>
-                        <div className='flex items-center'>
-                            <h3 className='text-gray-500 font-noto font-normal text-sm'>Did not received otp ?</h3>
-                            <Button variant={'link'} className='text-gray-100 font-noto font-normal text-sm cursor-pointer'>Resend OTP</Button>
+                        <div className='flex items-center max-[520px]:flex-col max-[520px]:gap-1'>
+                            <h3 className='text-gray-500 font-noto font-normal text-sm max-[520px]:text-xs'>Did not received otp ?</h3>
+                            <Button variant={'link'} className='text-gray-100 font-noto font-normal text-sm max-[520px]:text-xs cursor-pointer max-[520px]:p-0 max-[520px]:h-auto'>Resend OTP</Button>
                         </div>
-                        {otpError && <span className='font-noto text-sm text-red-600 font-normal'>{otpError}</span>}
+                        {otpError && <span className='font-noto text-sm max-[520px]:text-xs text-red-600 font-normal text-center'>{otpError}</span>}
                     </div>
                 </DialogContent>
             </Dialog>
